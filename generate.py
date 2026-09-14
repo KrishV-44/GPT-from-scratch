@@ -34,4 +34,49 @@ class Solution:
         
         return generated_text
 
-        # Once your code passes the test, check out the Colab link to see your code generate new Drake lyrics!
+
+
+if __name__ == "__main__":
+    # This block is what actually runs generation end-to-end.
+    import os
+    from model.gpt import GPT
+
+    HERE = os.path.dirname(os.path.abspath(__file__))
+    CHECKPOINT_PATH = os.path.join(HERE, "checkpoint.pt")
+
+    if not os.path.exists(CHECKPOINT_PATH):
+        raise FileNotFoundError(
+            f"No checkpoint found at {CHECKPOINT_PATH}. Run `python train.py` first."
+        )
+
+    checkpoint = torch.load(CHECKPOINT_PATH, weights_only=False)
+    stoi = checkpoint["stoi"]
+    itos = checkpoint["itos"]
+    config = checkpoint["config"]
+
+    model = GPT(
+        vocab_size=config["vocab_size"],
+        context_length=config["context_length"],
+        model_dim=config["model_dim"],
+        num_blocks=config["num_blocks"],
+        num_heads=config["num_heads"],
+    )
+    model.load_state_dict(checkpoint["model_state"])
+    model.eval()
+
+    seed_text = "the "
+    seed_ids = [stoi[c] for c in seed_text if c in stoi] or [0]
+    context = torch.tensor([seed_ids], dtype=torch.long)
+
+    generator = Solution()
+    generated = generator.generate(
+        model=model,
+        new_chars=300,
+        context=context,
+        context_length=config["context_length"],
+        int_to_char=itos,
+    )
+
+    print("Seed:", repr(seed_text))
+    print("Generated text:")
+    print(seed_text + generated)
