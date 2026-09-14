@@ -36,6 +36,10 @@ class Solution:
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+
+            # Print progress every 200 epochs
+            if (epoch + 1) % 200 == 0:
+                print(f"Epoch {epoch + 1}/{epochs} - Loss: {loss.item():.4f}")
             
         return round(loss.item(), 4)
 
