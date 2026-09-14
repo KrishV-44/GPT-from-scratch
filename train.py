@@ -38,3 +38,61 @@ class Solution:
             optimizer.step()
             
         return round(loss.item(), 4)
+
+
+if __name__ == "__main__":
+    # This block is what actually runs the training end-to-end.
+    import os
+    from data.vocab import Solution as VocabSolution
+    from model.gpt import GPT
+
+    HERE = os.path.dirname(os.path.abspath(__file__))
+    CORPUS_PATH = os.path.join(HERE, "data", "sample_corpus.txt")
+    CHECKPOINT_PATH = os.path.join(HERE, "checkpoint.pt")
+
+    with open(CORPUS_PATH, "r") as f:
+        text = f.read()
+
+    vocab_solution = VocabSolution()
+    stoi, itos = vocab_solution.build_vocab(text)
+    encoded = vocab_solution.encode(text, stoi)
+    data_tensor = torch.tensor(encoded, dtype=torch.long)
+
+    config = {
+        "vocab_size": len(stoi),
+        "context_length": 32,
+        "model_dim": 64,
+        "num_blocks": 2,
+        "num_heads": 2,
+    }
+
+    model = GPT(
+        vocab_size=config["vocab_size"],
+        context_length=config["context_length"],
+        model_dim=config["model_dim"],
+        num_blocks=config["num_blocks"],
+        num_heads=config["num_heads"],
+    )
+
+    trainer = Solution()
+    final_loss = trainer.train(
+        model=model,
+        data=data_tensor,
+        epochs=10000,
+        context_length=config["context_length"],
+        batch_size=16,
+        lr=3e-3,
+    )
+
+    print(f"Training complete. Final loss: {final_loss}")
+
+    torch.save(
+        {
+            "model_state": model.state_dict(),
+            "stoi": stoi,
+            "itos": itos,
+            "config": config,
+        },
+        CHECKPOINT_PATH,
+    )
+    print(f"Saved checkpoint to {CHECKPOINT_PATH}")
