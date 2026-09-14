@@ -22,7 +22,7 @@ class TransformerBlock(nn.Module):
         self.layer_norm2 = nn.LayerNorm(model_dim)
 
     def forward(self, embedded: TensorType[float]) -> TensorType[float]:
-        torch.manual_seed(0)
+        #torch.manual_seed(0)
         # Two residual connections with Pre-LN:
         #   x = x + attention(layer_norm_1(x))
         #   x = x + feed_forward(layer_norm_2(x))

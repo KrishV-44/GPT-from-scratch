@@ -25,7 +25,7 @@ class Solution:
             probs = nn.functional.softmax(last_logits, dim=-1)
             
             next_token = torch.multinomial(probs, num_samples=1, generator=generator)
-            generator.set_state(initial_state)
+            #generator.set_state(initial_state)
 
             context = torch.cat((context, next_token), dim=1)
             

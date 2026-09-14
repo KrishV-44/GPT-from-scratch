@@ -28,7 +28,7 @@ class GPT(nn.Module):
         self.lm_head = nn.Linear(model_dim, vocab_size)
 
     def forward(self, context: TensorType[int]) -> TensorType[float]:
-        torch.manual_seed(0)
+        #torch.manual_seed(0)
         # 1. Add token embeddings + position embeddings (use torch.arange for positions)
         # 2. Pass through transformer blocks
         # 3. Apply final LayerNorm, then project to vocab_size
