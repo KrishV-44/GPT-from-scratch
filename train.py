@@ -35,24 +35,10 @@ class Solution:
             # Backward pass & optimization step
             optimizer.zero_grad()
             loss.backward()
-
-            # Diagnostic
-            if epoch == 0:
-                print("LOSS:", loss.item())
-
-                for name, param in model.named_parameters():
-                    if param.grad is not None:
-                        print(
-                            "Gradient:",
-                            name,
-                            param.grad.abs().mean().item()
-                        )
-                        break
-
             optimizer.step()
 
-            # Print progress every 200 epochs
-            if (epoch + 1) % 200 == 0:
+            # Print progress every 100 epochs
+            if (epoch + 1) % 100 == 0:
                 print(f"Epoch {epoch + 1}/{epochs} - Loss: {loss.item():.4f}")
             
         return round(loss.item(), 4)
@@ -96,7 +82,7 @@ if __name__ == "__main__":
     final_loss = trainer.train(
         model=model,
         data=data_tensor,
-        epochs=1000,
+        epochs=8000,
         context_length=config["context_length"],
         batch_size=32,
         lr=3e-4,
