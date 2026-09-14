@@ -47,7 +47,7 @@ if __name__ == "__main__":
     from model.gpt import GPT
 
     HERE = os.path.dirname(os.path.abspath(__file__))
-    CORPUS_PATH = os.path.join(HERE, "data", "sample_corpus.txt")
+    CORPUS_PATH = os.path.join(HERE, "data", "tinyshakespeare.txt")
     CHECKPOINT_PATH = os.path.join(HERE, "checkpoint.pt")
 
     with open(CORPUS_PATH, "r") as f:
@@ -60,10 +60,10 @@ if __name__ == "__main__":
 
     config = {
         "vocab_size": len(stoi),
-        "context_length": 32,
-        "model_dim": 64,
-        "num_blocks": 2,
-        "num_heads": 2,
+        "context_length": 64,
+        "model_dim": 128,
+        "num_blocks": 4,
+        "num_heads": 4,
     }
 
     model = GPT(
@@ -78,10 +78,10 @@ if __name__ == "__main__":
     final_loss = trainer.train(
         model=model,
         data=data_tensor,
-        epochs=10000,
+        epochs=8000,
         context_length=config["context_length"],
-        batch_size=16,
-        lr=3e-3,
+        batch_size=32,
+        lr=3e-4,
     )
 
     print(f"Training complete. Final loss: {final_loss}")

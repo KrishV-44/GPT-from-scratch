@@ -64,7 +64,7 @@ if __name__ == "__main__":
     model.load_state_dict(checkpoint["model_state"])
     model.eval()
 
-    seed_text = "the "
+    seed_text = "ROMEO: "
     seed_ids = [stoi[c] for c in seed_text if c in stoi] or [0]
     context = torch.tensor([seed_ids], dtype=torch.long)
 
