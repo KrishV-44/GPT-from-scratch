@@ -25,7 +25,7 @@ class Solution:
             probs = nn.functional.softmax(last_logits, dim=-1)
             
             next_token = torch.multinomial(probs, num_samples=1, generator=generator)
-            #generator.set_state(initial_state)
+            generator.set_state(initial_state)
 
             context = torch.cat((context, next_token), dim=1)
             
@@ -34,10 +34,15 @@ class Solution:
         
         return generated_text
 
+        # Once your code passes the test, check out the Colab link to see your code generate new Drake lyrics!
 
 
 if __name__ == "__main__":
     # This block is what actually runs generation end-to-end.
+    # The `Solution` class above only defines the sampling logic; nothing
+    # in this file previously called it or loaded a model, which is why
+    # `python generate.py` did nothing. It loads the checkpoint produced
+    # by `python train.py`, so run that first.
     import os
     from model.gpt import GPT
 
@@ -64,17 +69,40 @@ if __name__ == "__main__":
     model.load_state_dict(checkpoint["model_state"])
     model.eval()
 
-    seed_text = "ROMEO: "
+    seed_text = "ROMEO:"
     seed_ids = [stoi[c] for c in seed_text if c in stoi] or [0]
     context = torch.tensor([seed_ids], dtype=torch.long)
 
-    generator = Solution()
-    generated = generator.generate(
+    # Solution.generate() above resets its RNG to the same fixed state
+    # after every sampled character (see the comment in that method). That's
+    # there on purpose so the NeetCode grader gets reproducible output, but
+    # it means the "randomness" never actually advances between steps -- once
+    # the model settles into a confident state, the same draw gets reapplied
+    # forever, producing loops like "tititititi...". This function is the
+    # same sampling logic minus that reset, so randomness genuinely
+    # progresses across the sequence. 'temperature' controls how random the
+    # sampling is: <1.0 sharpens the distribution (safer, more repetitive),
+    # >1.0 flattens it (more variety, more mistakes).
+    def sample(model, new_chars, context, context_length, int_to_char, temperature=0.8):
+        generated_text = ""
+        with torch.no_grad():
+            for _ in range(new_chars):
+                context_cond = context[:, -context_length:]
+                logits = model(context_cond)
+                last_logits = logits[:, -1, :] / temperature
+                probs = nn.functional.softmax(last_logits, dim=-1)
+                next_token = torch.multinomial(probs, num_samples=1)
+                context = torch.cat((context, next_token), dim=1)
+                generated_text += int_to_char[next_token.item()]
+        return generated_text
+
+    generated = sample(
         model=model,
         new_chars=300,
         context=context,
         context_length=config["context_length"],
         int_to_char=itos,
+        temperature=0.8,
     )
 
     print("Seed:", repr(seed_text))
