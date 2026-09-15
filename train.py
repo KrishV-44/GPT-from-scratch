@@ -45,7 +45,6 @@ class Solution:
 
 
 if __name__ == "__main__":
-    # This block is what actually runs the training end-to-end.
     import os
     from data.vocab import Solution as VocabSolution
     from model.gpt import GPT
@@ -82,7 +81,7 @@ if __name__ == "__main__":
     final_loss = trainer.train(
         model=model,
         data=data_tensor,
-        epochs=4000,
+        epochs=6000,
         context_length=config["context_length"],
         batch_size=32,
         lr=3e-4,
