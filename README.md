@@ -102,7 +102,7 @@ pip install -r requirements.txt
 
 ## 2. Generate text immediately
 
-A pretrained checkpoint is included with the repository, so you **do not need to train the model yourself**.
+A pretrained checkpoint is included with the repository, so you **do not need to train the model yourself**. It contains the trained model weights and configuration, allowing you to generate text without retraining the model.
 
 ```bash
 python generate.py
