@@ -27,7 +27,7 @@ class KVCache:
 class CachedAttention(nn.Module):
     def __init__(self, model_dim: int):
         super().__init__()
-        torch.manual_seed(0)
+        #torch.manual_seed(0)
         self.q_proj = nn.Linear(model_dim, model_dim, bias=False)
         self.k_proj = nn.Linear(model_dim, model_dim, bias=False)
         self.v_proj = nn.Linear(model_dim, model_dim, bias=False)

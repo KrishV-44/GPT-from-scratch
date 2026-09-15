@@ -8,7 +8,7 @@ class GPT(nn.Module):
 
     def __init__(self, vocab_size: int, context_length: int, model_dim: int, num_blocks: int, num_heads: int):
         super().__init__()
-        torch.manual_seed(0)
+        #torch.manual_seed(0)
         # Hint: nn.Sequential() will be useful for the block sequence
         # 1. Word embeddings
         self.wte = nn.Embedding(vocab_size, model_dim)
@@ -56,7 +56,7 @@ class GPT(nn.Module):
             class SingleHeadAttention(nn.Module):
                 def __init__(self, model_dim: int, head_size: int):
                     super().__init__()
-                    torch.manual_seed(0)
+                    #torch.manual_seed(0)
                     self.key_gen = nn.Linear(model_dim, head_size, bias=False)
                     self.query_gen = nn.Linear(model_dim, head_size, bias=False)
                     self.value_gen = nn.Linear(model_dim, head_size, bias=False)
@@ -79,7 +79,7 @@ class GPT(nn.Module):
                 
             def __init__(self, model_dim: int, num_heads: int):
                 super().__init__()
-                torch.manual_seed(0)
+                #torch.manual_seed(0)
                 self.att_heads = nn.ModuleList()
                 for i in range(num_heads):
                     self.att_heads.append(self.SingleHeadAttention(model_dim, model_dim // num_heads))
@@ -96,26 +96,26 @@ class GPT(nn.Module):
 
             def __init__(self, model_dim: int):
                 super().__init__()
-                torch.manual_seed(0)
+                #torch.manual_seed(0)
                 self.up_projection = nn.Linear(model_dim, model_dim * 4)
                 self.relu = nn.ReLU()
                 self.down_projection = nn.Linear(model_dim * 4, model_dim)
                 self.dropout = nn.Dropout(0.2) # using p = 0.2
             
             def forward(self, x: TensorType[float]) -> TensorType[float]:
-                torch.manual_seed(0)
+                #torch.manual_seed(0)
                 return self.dropout(self.down_projection(self.relu(self.up_projection(x))))
 
         def __init__(self, model_dim: int, num_heads: int):
             super().__init__()
-            torch.manual_seed(0)
+            #torch.manual_seed(0)
             self.attention = self.MultiHeadedSelfAttention(model_dim, num_heads)
             self.linear_network = self.VanillaNeuralNetwork(model_dim)
             self.first_norm = nn.LayerNorm(model_dim)
             self.second_norm = nn.LayerNorm(model_dim)
 
         def forward(self, embedded: TensorType[float]) -> TensorType[float]:
-            torch.manual_seed(0)
+            #torch.manual_seed(0)
             embedded = embedded + self.attention(self.first_norm(embedded)) # skip connection
             embedded = embedded + self.linear_network(self.second_norm(embedded)) # another skip connection
             return embedded

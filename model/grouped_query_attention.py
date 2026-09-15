@@ -5,7 +5,7 @@ from torchtyping import TensorType
 class GroupedQueryAttention(nn.Module):
     def __init__(self, model_dim: int, num_heads: int, num_kv_heads: int):
         super().__init__()
-        torch.manual_seed(0)
+        #torch.manual_seed(0)
         self.num_heads = num_heads
         self.num_kv_heads = num_kv_heads
         self.head_dim = model_dim // num_heads

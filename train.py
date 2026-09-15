@@ -82,7 +82,7 @@ if __name__ == "__main__":
     final_loss = trainer.train(
         model=model,
         data=data_tensor,
-        epochs=8000,
+        epochs=4000,
         context_length=config["context_length"],
         batch_size=32,
         lr=3e-4,

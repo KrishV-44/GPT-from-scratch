@@ -6,7 +6,7 @@ class MultiHeadedSelfAttention(nn.Module):
 
     def __init__(self, embedding_dim: int, attention_dim: int, num_heads: int):
         super().__init__()
-        torch.manual_seed(0)
+        #torch.manual_seed(0)
         # Create num_heads SingleHeadAttention instances using nn.ModuleList
         # Each head size = attention_dim // num_heads
         # Use: self.SingleHeadAttention(embedding_dim, head_size)
@@ -36,7 +36,7 @@ class MultiHeadedSelfAttention(nn.Module):
     class SingleHeadAttention(nn.Module):
         def __init__(self, embedding_dim: int, attention_dim: int):
             super().__init__()
-            torch.manual_seed(0)
+            #torch.manual_seed(0)
             self.key_gen = nn.Linear(embedding_dim, attention_dim, bias=False)
             self.query_gen = nn.Linear(embedding_dim, attention_dim, bias=False)
             self.value_gen = nn.Linear(embedding_dim, attention_dim, bias=False)
@@ -46,7 +46,7 @@ class MultiHeadedSelfAttention(nn.Module):
             q = self.query_gen(embedded)
             v = self.value_gen(embedded)
 
-            scores = q @ torch.transpose(k, 1, 2) # @ is the same as torch.matmul()
+            scores = q @ torch.transpose(k, 1, 2)
             context_length, attention_dim = k.shape[1], k.shape[2]
             scores = scores / (attention_dim ** 0.5)
 
