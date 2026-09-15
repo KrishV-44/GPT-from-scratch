@@ -68,7 +68,7 @@ if __name__ == "__main__":
     def sample(model, new_chars, context, context_length, int_to_char, temperature=0.8):
         generated_text = ""
         with torch.no_grad():
-            for _ in range(new_chars):
+            for i in range(new_chars):
                 context_cond = context[:, -context_length:]
                 logits = model(context_cond)
                 last_logits = logits[:, -1, :] / temperature
